@@ -17,6 +17,7 @@ pub struct Map {
     pub revealed_tiles: Vec<bool>,
     pub visible_tiles: Vec<bool>,
     pub blocked: Vec<bool>,
+    pub tile_content : Vec<Vec<Entity>>,
 }
 
 impl Algorithm2D for Map {
@@ -112,6 +113,7 @@ impl Map {
             revealed_tiles: vec![false; 80*50],
             visible_tiles: vec![false; 80*50],
             blocked: vec![false; 80*50],
+            tile_content: vec![Vec::new(); 80*50],
         };
 
         const MAX_ROOMS : i32 = 30;
@@ -150,6 +152,12 @@ impl Map {
         }
 
         map
+    }
+
+    pub fn clear_content_index(&mut self) {
+        for content in self.tile_content.iter_mut() {
+            content.clear();
+        }
     }
 }
 
