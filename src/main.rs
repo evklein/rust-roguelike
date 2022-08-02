@@ -21,6 +21,7 @@ pub use melee_combat_system::MeleeCombatSystem;
 mod damage_system;
 pub use damage_system::DamageSystem;
 mod gui;
+mod gamelog;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum RunState { AwaitingInput, PreRun, PlayerTurn, MonsterTurn }
@@ -169,6 +170,7 @@ fn main() -> rltk::BError {
     gs.ecs.insert(player_entity);
     gs.ecs.insert(Point::new(player_x, player_y));
     gs.ecs.insert(RunState::PreRun);
+    gs.ecs.insert(gamelog::GameLog{ entries : vec!["Welcome to Rusty Roguelike".to_string()] });
 
     rltk::main_loop(context, gs)
 }
