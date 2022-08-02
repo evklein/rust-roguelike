@@ -16,6 +16,10 @@ mod monster_ai_system;
 pub use monster_ai_system::MonsterAI;
 mod map_indexing_system;
 pub use map_indexing_system::MapIndexingSystem;
+mod melee_combat_system;
+pub use melee_combat_system::MeleeCombatSystem;
+mod damage_system;
+pub use damage_system::DamageSystem;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum RunState { Paused, Running }
@@ -36,6 +40,12 @@ impl State {
         let mut map_index = MapIndexingSystem {};
         map_index.run_now(&self.ecs);
 
+        let mut melee = MeleeCombatSystem{};
+        melee.run_now(&self.ecs);
+
+        let mut damage = DamageSystem{};
+        damage.run_now(&self.ecs);
+
         self.ecs.maintain();
     }
 }
@@ -49,7 +59,7 @@ impl GameState for State {
         } else {
             self.runstate = player_input(self, ctx);
         }
-
+        damage_system::delete_the_dead(&mut self.ecs);
         draw_map(&self.ecs, ctx);
 
         let positions = self.ecs.read_storage::<Position>();
@@ -84,6 +94,8 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Name>();
     gs.ecs.register::<BlocksTile>();
     gs.ecs.register::<CombatStats>();
+    gs.ecs.register::<SufferDamage>();
+    gs.ecs.register::<WantsToMelee>();
 
     let map = Map::new_map_rooms_and_corridors();
     let (player_x, player_y) = map.rooms[0].center();
